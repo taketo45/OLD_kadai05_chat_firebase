@@ -1,53 +1,42 @@
 'use strict';
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/9.13.0/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, onChildAdded, remove, onChildRemoved } 
-    from "https://www.gstatic.com/firebasejs/9.13.0/firebase-database.js";
+// import { getDatabase, ref, push, set, onValue, onChildAdded, remove, onChildRemoved } 
+//     from "https://www.gstatic.com/firebasejs/9.13.0/firebase-database.js";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } 
     from "https://www.gstatic.com/firebasejs/9.13.0/firebase-auth.js";
-import  { memo_app } from "./Constant.js";
+import {
+        connectStorageEmulator,
+        getStorage,
+        ref,
+        uploadBytes,
+        getDownloadURL,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
+import  { memo_app, photo_app } from "./Constant.js";
 import { firebaseConfig } from "./MyAuthkeysModules.js";
-import  { getFirebaseObj, googleAuthLaterProcess } from "./GoogleFirebase.js";
+import  { getFirebaseObj, googleAuthLaterProcess } from "./GoogleFirebaseStorage.js";
 
 const firebaseObj = getFirebaseObj(firebaseConfig);
 const auth = firebaseObj.auth;
 
 //Login成功したら下記を処理
 onAuthStateChanged(auth, (user) => {
-    // const uid = user.uid;
-    const userdetail = getUserDetail(user);
-    //初期表示
-    afterAuthInitDisplay(userdetail);
 
-    //データ登録(Click)
-    memo_app.$sendbtn.on("click",function() {
-        const msg = {
-            title: memo_app.$title.val(),
-            text:  memo_app.$text.val()
-        }
-        setMessage(user,firebaseObj,msg);
-    });
-
-    //最初にデータ取得＆onSnapshotでリアルタイムにデータを取得
-    memo_app.$title.on("change",function(){
-        memoHadler(user,firebaseObj,$(this).val());
-    });
+    photo_app.$input.change(()=> handleChange());
+    photo_app.$form.on("submit",handleSubmit);
 });
 
 
-memo_app.$outbtn.on("click", function () {
-  logOut(auth);
-});
+function handleChange(){
+    const file = inputRef.files[0];
+    console.log(file.name);
+    console.log(file.type);
+    console.log(file.size);
+}
 
-// memo_app.$photobtn.on("click", function () {
-//     redirectPhoto();
-// });
-
-
-// function redirectPhoto(){
-//     location.href= memo_app.photo_url;
-// }
-
+function handleSubmit(){
+    return;
+}
 
 // viewMemoApp
 function afterAuthInitDisplay(userdetail){
